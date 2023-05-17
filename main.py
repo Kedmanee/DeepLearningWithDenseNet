@@ -32,7 +32,7 @@ class FelidaeDataset(Dataset):
         for class_label in class_labels:
             class_dir = os.path.join(self.root_dir, class_label)
             files = os.listdir(class_dir)
-            files = [os.path.join(class_dir, file) for file in files]
+            files = [os.path.join(class_dir, file) for file in files if not file.startswith('.DS_Store')]
             file_list.extend(files)
         return file_list
 
