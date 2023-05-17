@@ -5,6 +5,8 @@ from torch.utils.data import Dataset, DataLoader
 from torchvision import models, transforms
 from PIL import Image
 import os
+from torchvision.transforms import RandomHorizontalFlip, RandomRotation
+
 
 # Define the class labels
 class_labels = ['Tiger', 'Lion', 'Cheetah', 'Leopard', 'Puma']
@@ -45,6 +47,8 @@ class FelidaeDataset(Dataset):
 # Define the transformations for preprocessing
 preprocess = transforms.Compose([
     transforms.Resize(256),
+    transforms.RandomHorizontalFlip(),  # Randomly flip the image horizontally
+    transforms.RandomRotation(10),  # Randomly rotate the image by a maximum of 10 degrees
     transforms.CenterCrop(224),
     transforms.ToTensor(),
     transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
@@ -58,6 +62,9 @@ model = models.densenet121(pretrained=True)
 num_features = model.classifier.in_features
 model.classifier = nn.Linear(num_features, len(class_labels))
 model = model.to(device)
+# Define the transformations for preprocessing and data augmentation
+
+
 
 # Load the training and validation datasets
 train_dataset = FelidaeDataset(root_dir='./train_images', transform=preprocess)
