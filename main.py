@@ -72,7 +72,7 @@ criterion = nn.CrossEntropyLoss()
 optimizer = optim.SGD(model.parameters(), lr=0.001, momentum=0.9)
 
 # Training loop
-num_epochs = 10
+num_epochs = 1
 
 for epoch in range(num_epochs):
     train_loss = 0.0
@@ -109,6 +109,8 @@ for epoch in range(num_epochs):
             valid_loss += loss.item() * images.size(0)
             _, predicted = torch.max(outputs, 1)
             valid_correct += (predicted == labels).sum().item()
+            print(f"Predict : {predicted}")
+            print(f"Image : {labels}")
 
     # Calculate average losses and accuracies
     train_loss = train_loss / len(train_dataset)
