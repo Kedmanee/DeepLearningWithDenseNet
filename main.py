@@ -9,7 +9,7 @@ from torchvision.transforms import RandomHorizontalFlip, RandomRotation
 
 
 # Define the class labels
-class_labels = ['Tiger', 'Lion', 'Cheetah', 'Leopard', 'Puma']
+class_labels = ['Cheetah', 'Leopard', 'Lion', 'Puma', 'Tiger']
 
 # Define the custom dataset class
 class FelidaeDataset(Dataset):
@@ -79,14 +79,16 @@ criterion = nn.CrossEntropyLoss()
 optimizer = optim.SGD(model.parameters(), lr=0.001, momentum=0.9)
 
 # Training loop
-num_epochs = 1
+# Training loop
+num_epochs = 10
 
 for epoch in range(num_epochs):
     train_loss = 0.0
     valid_loss = 0.0
     train_correct = 0
     valid_correct = 0
-
+    print(f"Round : {epoch+1}/{num_epochs}")
+    print()
     # Training phase
     model.train()
     for images, labels in train_loader:
@@ -102,22 +104,31 @@ for epoch in range(num_epochs):
         train_loss += loss.item() * images.size(0)
         _, predicted = torch.max(outputs, 1)
         train_correct += (predicted == labels).sum().item()
-
     # Validation phase
     model.eval()
     with torch.no_grad():
-        for images, labels in valid_loader:
+        for batch_idx, (images, labels) in enumerate(valid_loader):
             images = images.to(device)
             labels = labels.to(device)
-
             outputs = model(images)
             loss = criterion(outputs, labels)
 
             valid_loss += loss.item() * images.size(0)
             _, predicted = torch.max(outputs, 1)
+            
             valid_correct += (predicted == labels).sum().item()
-            print(f"Predict : {predicted}")
-            print(f"Image : {labels}")
+            print(f"Wrong prediction: ")
+            for i in range(len(predicted)):
+                image_index = batch_idx * valid_loader.batch_size + i
+                image_path = valid_dataset.file_list[image_index]
+                predicted_class = class_labels[predicted[i]]
+                if predicted_class != actual_class:
+                    print("Image:", image_path.split("\\")[-1])
+                    print(f"Predict: {predicted_class}")
+                    print()
+                    # print("Image path:", image_path.split("\\")[-1])
+                    # print(f"Predicted class: {predicted_class}, Actual class: {actual_class}")
+                    # print()
 
     # Calculate average losses and accuracies
     train_loss = train_loss / len(train_dataset)
@@ -126,9 +137,7 @@ for epoch in range(num_epochs):
     valid_accuracy = valid_correct / len(valid_dataset) * 100
 
     # Print epoch results
-    print(f"Epoch: {epoch+1}/{num_epochs}")
     print(f"Train Loss: {train_loss:.4f} | Train Accuracy: {train_accuracy:.2f}%")
     print(f"Valid Loss: {valid_loss:.4f} | Valid Accuracy: {valid_accuracy:.2f}%")
     print("--------------------------------------------")
 
-# After training, you can use the model for evaluation as shown in the previous code snippet.
