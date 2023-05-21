@@ -122,6 +122,7 @@ for epoch in range(num_epochs):
                 image_index = batch_idx * valid_loader.batch_size + i
                 image_path = valid_dataset.file_list[image_index]
                 predicted_class = class_labels[predicted[i]]
+                actual_class = class_labels[labels[i]]
                 if predicted_class != actual_class:
                     print("Image:", image_path.split("\\")[-1])
                     print(f"Predict: {predicted_class}")
