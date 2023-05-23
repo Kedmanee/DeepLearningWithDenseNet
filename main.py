@@ -47,8 +47,6 @@ class FelidaeDataset(Dataset):
 # Define the transformations for preprocessing
 preprocess = transforms.Compose([
     transforms.Resize(256),
-    transforms.RandomHorizontalFlip(),  # Randomly flip the image horizontally
-    transforms.RandomRotation(10),  # Randomly rotate the image by a maximum of 10 degrees
     transforms.CenterCrop(224),
     transforms.ToTensor(),
     transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
