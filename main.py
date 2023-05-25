@@ -5,7 +5,6 @@ from torch.utils.data import Dataset, DataLoader
 from torchvision import models, transforms
 from PIL import Image
 import os
-from torchvision.transforms import RandomHorizontalFlip, RandomRotation
 
 
 # Define the class labels
@@ -44,10 +43,12 @@ class FelidaeDataset(Dataset):
                 return i
         return -1
 
-# Define the transformations for preprocessing
 preprocess = transforms.Compose([
     transforms.Resize(256),
     transforms.CenterCrop(224),
+    transforms.RandomCrop(224),
+    transforms.ColorJitter(brightness=0.4, contrast=0.4, saturation=0.4, hue=0.1),
+    transforms.GaussianBlur(kernel_size=3),
     transforms.ToTensor(),
     transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
 ])
@@ -125,9 +126,6 @@ for epoch in range(num_epochs):
                     print("Image:", image_path.split("\\")[-1])
                     print(f"Predict: {predicted_class}")
                     print()
-                    # print("Image path:", image_path.split("\\")[-1])
-                    # print(f"Predicted class: {predicted_class}, Actual class: {actual_class}")
-                    # print()
 
     # Calculate average losses and accuracies
     train_loss = train_loss / len(train_dataset)
